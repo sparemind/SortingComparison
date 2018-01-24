@@ -1,23 +1,62 @@
+import javax.swing.JButton;
+import javax.swing.JFrame;
+import javax.swing.JPanel;
+import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.GridLayout;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
 public class SortingComparison {
-    private static final int GRID_WIDTH = 60;
-    private static final int GRID_HEIGHT = 60;
+    private static final int GRID_WIDTH = 50;
+    private static final int GRID_HEIGHT = 50;
     private static final int CELL_SIZE = 10;
     private SimpleGrid grid;
     private ColorScheme colorScheme;
+    private Sort[] sorts;
+    private volatile boolean doSort;
 
     public SortingComparison(ColorScheme colorScheme) {
+        this.grid = new SimpleGrid(GRID_WIDTH, GRID_HEIGHT, CELL_SIZE, 0, "Sorting Algorithm Comparison");
         this.colorScheme = colorScheme;
-        grid = new SimpleGrid(GRID_WIDTH, GRID_HEIGHT, CELL_SIZE, 0, "Sorting Algorithm Comparison");
+        this.sorts = new Sort[GRID_WIDTH];
+        this.doSort = false;
 
         for (int i = 0; i < GRID_HEIGHT; i++) {
-            grid.setColor(i, valueToColor(i, 0, GRID_HEIGHT));
-            grid.fillRow(i, i);
+            this.grid.setColor(i, valueToColor(i, 0, GRID_HEIGHT));
+            this.grid.fillRow(i, i);
         }
+
+        initGui();
+    }
+
+    /**
+     * Initializes the user controls and interface.
+     */
+    private void initGui() {
+        JFrame frame = this.grid.getFrame();
+        JPanel controlPanel = new JPanel();
+        controlPanel.setLayout(new GridLayout(10, 1));
+
+        // Reset button
+        // JButton resetButton = new JButton("Reset");
+        // resetButton.addActionListener(e -> reset());
+        // controlPanel.add(resetButton);
+
+        JButton selectionSortButton = new JButton("Selection Sort");
+        selectionSortButton.addActionListener(e -> {
+            this.doSort = true;
+
+            for (int i = 0; i < GRID_WIDTH; i++) {
+                this.sorts[i] = new SelectionSort(this.grid, i);
+            }
+        });
+        controlPanel.add(selectionSortButton);
+
+        frame.add(controlPanel, BorderLayout.EAST);
+        frame.pack();
+        frame.setLocationRelativeTo(null);
     }
 
     private Color valueToColor(int value, int minValue, int maxValue) {
@@ -31,7 +70,7 @@ public class SortingComparison {
         int range = maxValue - minValue;
         float trueValue = ((float) (value - minValue)) / range;
 
-        switch (colorScheme) {
+        switch (this.colorScheme) {
             case RAINBOW:
                 return new Color(Color.HSBtoRGB(trueValue, 1.f, 1.f));
         }
@@ -46,39 +85,50 @@ public class SortingComparison {
                 for (int i = 0; i < GRID_HEIGHT; i++) {
                     columnValues.add(i);
                 }
-                Collections.shuffle(columnValues);
+                for (int x = 0; x < GRID_WIDTH; x++) {
+                    Collections.shuffle(columnValues);
+
+                    for (int y = 0; y < GRID_HEIGHT; y++) {
+                        this.grid.set(x, y, columnValues.get(y));
+                    }
+                }
                 break;
             case REVERSE_SORTED:
                 for (int i = 0; i < GRID_HEIGHT; i++) {
                     columnValues.add(GRID_HEIGHT - 1 - i);
                 }
+                for (int x = 0; x < GRID_WIDTH; x++) {
+                    for (int y = 0; y < GRID_HEIGHT; y++) {
+                        this.grid.set(x, y, columnValues.get(y));
+                    }
+                }
                 break;
-        }
-
-        for (int x = 0; x < GRID_WIDTH; x++) {
-            for (int y = 0; y < GRID_HEIGHT; y++) {
-                grid.set(x, y, columnValues.get(y));
-            }
         }
     }
 
     public void run() {
+        while (true) {
+            if (this.doSort) {
+                sort();
+                this.doSort = false;
+            }
+        }
+    }
+
+    private void sort() {
         shuffle(ShuffleType.RANDOM);
 
-        Sort[] sorts = new Sort[GRID_WIDTH];
-        for (int i = 0; i < GRID_WIDTH; i++) {
-            sorts[i] = new SelectionSort(grid, i);
-            sorts[i].start();
+        // Start sorts
+        for (Sort sort : this.sorts) {
+            sort.start();
         }
-        for(int i = 0; i < GRID_WIDTH; i++) {
+        // Wait for all sorts to finish
+        for (Sort sort : this.sorts) {
             try {
-                sorts[i].join();
+                sort.join();
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
-        }
-        while (true) {
-
         }
     }
 
