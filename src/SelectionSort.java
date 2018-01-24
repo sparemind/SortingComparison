@@ -2,8 +2,8 @@ public class SelectionSort extends Sort {
     /**
      * {@inheritDoc}
      */
-    public SelectionSort(SimpleGrid grid, int column, int delay) {
-        super(grid, column, delay);
+    public SelectionSort(SimpleGrid grid, SubGrid subGrid, int column, int delay) {
+        super(grid, subGrid, column, delay);
     }
 
     /**
@@ -11,11 +11,11 @@ public class SelectionSort extends Sort {
      */
     @Override
     public void run() {
-        for (int i = 0; i < this.grid.getHeight() - 1; i++) {
+        for (int i = 0; i < length() - 1; i++) {
             int min = i;
 
-            for (int j = i + 1; j < this.grid.getHeight(); j++) {
-                if (this.grid.get(this.column, j) < this.grid.get(this.column, min)) {
+            for (int j = i + 1; j < length(); j++) {
+                if (get(j) < get(min)) {
                     min = j;
                 }
             }
