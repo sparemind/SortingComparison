@@ -1,7 +1,8 @@
 public class Sort extends Thread {
-    protected SimpleGrid grid;
+    protected SubGrid subGrid;
     protected int column;
 
+    private SimpleGrid grid;
     private int delay;
 
     /**
@@ -12,8 +13,9 @@ public class Sort extends Thread {
      * @param column The column of the grid to operate on.
      * @param delay  The delay between sorting steps, in milliseconds.
      */
-    public Sort(SimpleGrid grid, int column, int delay) {
+    public Sort(SimpleGrid grid, SubGrid subGrid, int column, int delay) {
         this.grid = grid;
+        this.subGrid = subGrid;
         this.column = column;
         this.delay = delay;
     }
@@ -25,9 +27,38 @@ public class Sort extends Thread {
      * @param j The index of the second element.
      */
     protected void swap(int i, int j) {
-        int tmp = this.grid.get(this.column, i);
-        this.grid.set(this.column, i, this.grid.get(this.column, j));
-        this.grid.set(this.column, j, tmp);
+        int tmp = get(i);
+        set(i, get(j));
+        set(j, tmp);
+    }
+
+    /**
+     * TODO
+     *
+     * @return
+     */
+    protected int length() {
+        return this.subGrid.getHeight();
+    }
+
+    /**
+     * TODO
+     *
+     * @param index
+     * @return
+     */
+    protected int get(int index) {
+        return this.grid.get(this.subGrid.convert(this.column, index));
+    }
+
+    /**
+     * TODO
+     *
+     * @param index
+     * @param value
+     */
+    protected void set(int index, int value) {
+        this.grid.set(this.subGrid.convert(this.column, index), value);
     }
 
     /**

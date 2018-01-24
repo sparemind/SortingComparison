@@ -1,23 +1,36 @@
 import javax.swing.JButton;
+import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.GridLayout;
+import java.lang.reflect.Constructor;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
+import java.util.IdentityHashMap;
 import java.util.List;
+import java.util.Map;
 
 public class SortingComparison {
-    private static final int GRID_WIDTH = 50;
-    private static final int GRID_HEIGHT = 50;
-    private static final int CELL_SIZE = 10;
-    private static final int DELAY = 100;
+    private static final int GRID_WIDTH = 100;
+    private static final int GRID_HEIGHT = 100;
+    private static final int CELL_SIZE = 3;
+    private static final int MARGIN_X = 3;
+    private static final int MARGIN_Y = 3;
+    private static final int GRIDS_HORZ = 4;
+    private static final int GRIDS_VERT = 1;
+    private static final int BORDER = 3;
 
     private SimpleGrid grid;
-    private ColorScheme colorScheme;
-    private volatile Sort[] sorts;
+    private SubGrid[] subGrids;
+    private List<Class<? extends Sort>> algorithms;
+    private Map<Class<? extends Sort>, Integer> algorithmDelays;
+    private volatile Map<SubGrid, Sort[]> sorts;
     private volatile boolean doSort;
+    private ColorScheme colorScheme;
+    private JComboBox[] selectionBoxes;
 
     /**
      * Creates a new sorting comparison visualizes with the given color scheme.
@@ -25,53 +38,83 @@ public class SortingComparison {
      * @param colorScheme The color scheme to use.
      */
     public SortingComparison(ColorScheme colorScheme) {
-        this.grid = new SimpleGrid(GRID_WIDTH, GRID_HEIGHT, CELL_SIZE, 0, "Sorting Algorithm Comparison");
-        this.colorScheme = colorScheme;
-        this.sorts = new Sort[GRID_WIDTH];
-        this.doSort = false;
+        // Create main grid
+        int fullWidth = MARGIN_X * 2 + GRIDS_HORZ * GRID_WIDTH + (GRIDS_HORZ - 1) * BORDER;
+        int fullHeight = MARGIN_Y * 2 + GRIDS_VERT * GRID_HEIGHT + (GRIDS_VERT - 1) * BORDER;
+        this.grid = new SimpleGrid(fullWidth, fullHeight, CELL_SIZE, 0, "Sorting Algorithm Comparison");
+        this.grid.fill(-1);
 
+        // Create sub-grids
+        this.subGrids = new SubGrid[GRIDS_HORZ * GRIDS_VERT];
+        this.sorts = new IdentityHashMap<>();
+        for (int i = 0; i < this.subGrids.length; i++) {
+            int x = MARGIN_X + i % GRIDS_HORZ * (GRID_WIDTH + BORDER);
+            int y = MARGIN_Y + i / GRIDS_HORZ * (GRID_HEIGHT + BORDER);
+            this.subGrids[i] = new SubGrid(this.grid, x, y, GRID_WIDTH, GRID_HEIGHT);
+
+            this.sorts.put(this.subGrids[i], null);
+        }
+
+        // Initialize other fields
+        this.colorScheme = colorScheme;
+        this.doSort = false;
+        this.selectionBoxes = new JComboBox[GRIDS_HORZ * GRIDS_VERT];
+        this.algorithmDelays = new HashMap<>();
+        this.algorithms = new ArrayList<>();
+        this.algorithms.add(SelectionSort.class);
+        this.algorithms.add(InsertionSort.class);
+        this.algorithms.add(MergeSort.class);
+        this.algorithms.add(None.class);
+        this.algorithmDelays.put(SelectionSort.class, 50);
+        this.algorithmDelays.put(InsertionSort.class, 45);
+        this.algorithmDelays.put(MergeSort.class, 8);
+        this.algorithmDelays.put(None.class, 0);
+
+        // Set grid colors
+        this.grid.setColor(-1, Color.GRAY);
         for (int i = 0; i < GRID_HEIGHT; i++) {
             this.grid.setColor(i, valueToColor(i, 0, GRID_HEIGHT));
-            this.grid.fillRow(i, i);
         }
 
         initGui();
+        for (SubGrid subGrid : this.subGrids) {
+            shuffle(subGrid, ShuffleType.RANDOM);
+        }
     }
 
     /**
      * Initializes the user controls and interface.
      */
     private void initGui() {
-        JFrame frame = this.grid.getFrame();
+        JPanel topPanel = new JPanel();
+        topPanel.setLayout(new BorderLayout());
+
+        JPanel algorithmsPanel = new JPanel();
+        algorithmsPanel.setLayout(new GridLayout(1, GRIDS_HORZ * GRIDS_VERT));
+        topPanel.add(algorithmsPanel, BorderLayout.NORTH);
+
+        String[] algorithmOptions = new String[this.algorithms.size()];
+        for (int i = 0; i < this.algorithms.size(); i++) {
+            algorithmOptions[i] = this.algorithms.get(i).getCanonicalName();
+        }
+
+        for (int i = 0; i < this.subGrids.length; i++) {
+            JComboBox<String> selectionBox = new JComboBox<>(algorithmOptions);
+            // If there are more grids than algorithms, assign any extras to be
+            // "None", which is the last in the this.algorithms list.
+            selectionBox.setSelectedIndex(i < this.algorithms.size() ? i : this.algorithms.size() - 1);
+            algorithmsPanel.add(selectionBox);
+            this.selectionBoxes[i] = selectionBox;
+        }
+
         JPanel controlPanel = new JPanel();
-        controlPanel.setLayout(new GridLayout(10, 1));
+        JButton sortButton = new JButton("Sort");
+        sortButton.addActionListener(e -> SortingComparison.this.doSort = true);
+        controlPanel.add(sortButton);
 
-        // Reset button
-        // JButton resetButton = new JButton("Reset");
-        // resetButton.addActionListener(e -> reset());
-        // controlPanel.add(resetButton);
-
-        JButton selectionSortButton = new JButton("Selection Sort");
-        selectionSortButton.addActionListener(e -> {
-            this.doSort = true;
-
-            for (int i = 0; i < GRID_WIDTH; i++) {
-                this.sorts[i] = new SelectionSort(this.grid, i, DELAY);
-            }
-        });
-        controlPanel.add(selectionSortButton);
-
-        JButton insertionSortButton = new JButton("Insertion Sort");
-        insertionSortButton.addActionListener(e -> {
-            this.doSort = true;
-
-            for (int i = 0; i < GRID_WIDTH; i++) {
-                this.sorts[i] = new InsertionSort(this.grid, i, DELAY);
-            }
-        });
-        controlPanel.add(insertionSortButton);
-
-        frame.add(controlPanel, BorderLayout.EAST);
+        JFrame frame = this.grid.getFrame();
+        frame.add(topPanel, BorderLayout.NORTH);
+        frame.add(controlPanel, BorderLayout.SOUTH);
         frame.pack();
         frame.setLocationRelativeTo(null);
     }
@@ -103,17 +146,24 @@ public class SortingComparison {
         switch (this.colorScheme) {
             case RAINBOW:
                 return new Color(Color.HSBtoRGB(trueValue, 1.f, 1.f));
+            case BLUE:
+                return new Color(Color.HSBtoRGB(0.55f, 0.6f, 1 - trueValue));
+            case RED:
+                return new Color(Color.HSBtoRGB(0.f, 0.6f, 1 - trueValue));
+            case GREEN:
+                return new Color(Color.HSBtoRGB(0.3f, 0.6f, 1 - trueValue));
         }
 
         return Color.MAGENTA;
     }
 
     /**
-     * Shuffles the data to sort according to the given shuffle type.
+     * Shuffles a grid's data according to the given shuffle type.
      *
+     * @param subGrid     The grid to shuffle.
      * @param shuffleType How to shuffle the data
      */
-    private void shuffle(ShuffleType shuffleType) {
+    private void shuffle(SubGrid subGrid, ShuffleType shuffleType) {
         List<Integer> columnValues = new ArrayList<>();
         switch (shuffleType) {
             case RANDOM:
@@ -124,7 +174,7 @@ public class SortingComparison {
                     Collections.shuffle(columnValues);
 
                     for (int y = 0; y < GRID_HEIGHT; y++) {
-                        this.grid.set(x, y, columnValues.get(y));
+                        this.grid.set(subGrid.convert(x, y), columnValues.get(y));
                     }
                 }
                 break;
@@ -134,7 +184,7 @@ public class SortingComparison {
                 }
                 for (int x = 0; x < GRID_WIDTH; x++) {
                     for (int y = 0; y < GRID_HEIGHT; y++) {
-                        this.grid.set(x, y, columnValues.get(y));
+                        this.grid.set(subGrid.convert(x, y), columnValues.get(y));
                     }
                 }
                 break;
@@ -157,27 +207,57 @@ public class SortingComparison {
      * Runs a sort using the currently set sorting algorithm.
      */
     private void sort() {
-        shuffle(ShuffleType.RANDOM);
+        for (SubGrid subGrid : this.subGrids) {
+            shuffle(subGrid, ShuffleType.RANDOM);
+        }
+
+        for (int i = 0; i < GRIDS_HORZ * GRIDS_VERT; i++) {
+            initializeSorters(i);
+        }
 
         // Start sorts
-        for (Sort sort : this.sorts) {
-            sort.start();
+        for (SubGrid subGrid : this.sorts.keySet()) {
+            for (Sort sort : this.sorts.get(subGrid)) {
+                sort.start();
+            }
         }
         // Wait for all sorts to finish
-        for (Sort sort : this.sorts) {
+        for (SubGrid subGrid : this.sorts.keySet()) {
+            for (Sort sort : this.sorts.get(subGrid)) {
+                try {
+                    sort.join();
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+    }
+
+    private void initializeSorters(int index) {
+        JComboBox selectionBox = this.selectionBoxes[index];
+        SubGrid subGrid = this.subGrids[index];
+
+        int selectedAlgorithmIndex = selectionBox.getSelectedIndex();
+        Class<? extends Sort> algorithm = this.algorithms.get(selectedAlgorithmIndex);
+        Constructor<?> constructor = algorithm.getConstructors()[0];
+
+        Sort[] sorters = new Sort[GRID_WIDTH];
+        for (int i = 0; i < sorters.length; i++) {
             try {
-                sort.join();
-            } catch (InterruptedException e) {
+                sorters[i] = (Sort) constructor.newInstance(this.grid, subGrid, i, this.algorithmDelays.get(algorithm));
+            } catch (Exception e) {
                 e.printStackTrace();
             }
         }
+
+        this.sorts.put(subGrid, sorters);
     }
 
     /**
      * The possible color schemes of the visualization.
      */
     public enum ColorScheme {
-        RAINBOW
+        RAINBOW, BLUE, RED, GREEN
     }
 
     /**

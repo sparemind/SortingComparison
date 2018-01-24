@@ -2,8 +2,8 @@ public class InsertionSort extends Sort {
     /**
      * {@inheritDoc}
      */
-    public InsertionSort(SimpleGrid grid, int column, int delay) {
-        super(grid, column, delay);
+    public InsertionSort(SimpleGrid grid, SubGrid subGrid, int column, int delay) {
+        super(grid, subGrid, column, delay);
     }
 
     /**
@@ -13,9 +13,9 @@ public class InsertionSort extends Sort {
     public void run() {
         int i = 1;
 
-        while (i < this.grid.getHeight()) {
+        while (i < length()) {
             int j = i;
-            while (j > 0 && this.grid.get(this.column, j - 1) > this.grid.get(this.column, j)) {
+            while (j > 0 && get(j - 1) > get(j)) {
                 swap(j, j - 1);
                 j--;
             }
