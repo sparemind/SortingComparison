@@ -9,6 +9,7 @@ public class SortingComparison {
     private static final int CELL_SIZE = 10;
     private SimpleGrid grid;
     private ColorScheme colorScheme;
+
     public SortingComparison(ColorScheme colorScheme) {
         this.colorScheme = colorScheme;
         grid = new SimpleGrid(GRID_WIDTH, GRID_HEIGHT, CELL_SIZE, 0, "Sorting Algorithm Comparison");
@@ -63,6 +64,19 @@ public class SortingComparison {
 
     public void run() {
         shuffle(ShuffleType.RANDOM);
+
+        Sort[] sorts = new Sort[GRID_WIDTH];
+        for (int i = 0; i < GRID_WIDTH; i++) {
+            sorts[i] = new SelectionSort(grid, i);
+            sorts[i].start();
+        }
+        for(int i = 0; i < GRID_WIDTH; i++) {
+            try {
+                sorts[i].join();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
         while (true) {
 
         }
