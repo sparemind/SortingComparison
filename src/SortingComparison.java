@@ -12,11 +12,18 @@ public class SortingComparison {
     private static final int GRID_WIDTH = 50;
     private static final int GRID_HEIGHT = 50;
     private static final int CELL_SIZE = 10;
+    private static final int DELAY = 100;
+
     private SimpleGrid grid;
     private ColorScheme colorScheme;
     private Sort[] sorts;
     private volatile boolean doSort;
 
+    /**
+     * Creates a new sorting comparison visualizes with the given color scheme.
+     *
+     * @param colorScheme The color scheme to use.
+     */
     public SortingComparison(ColorScheme colorScheme) {
         this.grid = new SimpleGrid(GRID_WIDTH, GRID_HEIGHT, CELL_SIZE, 0, "Sorting Algorithm Comparison");
         this.colorScheme = colorScheme;
@@ -49,7 +56,7 @@ public class SortingComparison {
             this.doSort = true;
 
             for (int i = 0; i < GRID_WIDTH; i++) {
-                this.sorts[i] = new SelectionSort(this.grid, i);
+                this.sorts[i] = new SelectionSort(this.grid, i, DELAY);
             }
         });
         controlPanel.add(selectionSortButton);
@@ -59,6 +66,19 @@ public class SortingComparison {
         frame.setLocationRelativeTo(null);
     }
 
+    /**
+     * Converts a value to a color depending on the set color scheme.
+     *
+     * @param value    The value to convert to a color.
+     * @param minValue The minimum possible value a value can be.
+     * @param maxValue The maximum possible value a value can be.
+     * @return The Color representation of this value in the current color
+     * scheme.
+     * @throws IllegalArgumentException If the minimum value is greater than or
+     *                                  equal to the maximum value. If the value
+     *                                  does not fall in the range between the
+     *                                  min and max values.
+     */
     private Color valueToColor(int value, int minValue, int maxValue) {
         if (minValue >= maxValue) {
             throw new IllegalArgumentException("Minimum value must be less than maximum value.");
@@ -78,6 +98,11 @@ public class SortingComparison {
         return Color.MAGENTA;
     }
 
+    /**
+     * Shuffles the data to sort according to the given shuffle type.
+     *
+     * @param shuffleType How to shuffle the data
+     */
     private void shuffle(ShuffleType shuffleType) {
         List<Integer> columnValues = new ArrayList<>();
         switch (shuffleType) {
@@ -106,6 +131,9 @@ public class SortingComparison {
         }
     }
 
+    /**
+     * Begins the comparison application and enables running.
+     */
     public void run() {
         while (true) {
             if (this.doSort) {
@@ -115,6 +143,9 @@ public class SortingComparison {
         }
     }
 
+    /**
+     * Runs a sort using the currently set sorting algorithm.
+     */
     private void sort() {
         shuffle(ShuffleType.RANDOM);
 
@@ -132,10 +163,16 @@ public class SortingComparison {
         }
     }
 
+    /**
+     * The possible color schemes of the visualization.
+     */
     public enum ColorScheme {
         RAINBOW
     }
 
+    /**
+     * How the data is initially shuffled.
+     */
     private enum ShuffleType {
         RANDOM, REVERSE_SORTED
     }
