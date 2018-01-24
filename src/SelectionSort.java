@@ -1,4 +1,7 @@
 public class SelectionSort extends Sort {
+    /**
+     * {@inheritDoc}
+     */
     public SelectionSort(SimpleGrid grid, int column, int delay) {
         super(grid, column, delay);
     }

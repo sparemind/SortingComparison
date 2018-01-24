@@ -16,7 +16,7 @@ public class SortingComparison {
 
     private SimpleGrid grid;
     private ColorScheme colorScheme;
-    private Sort[] sorts;
+    private volatile Sort[] sorts;
     private volatile boolean doSort;
 
     /**
@@ -60,6 +60,16 @@ public class SortingComparison {
             }
         });
         controlPanel.add(selectionSortButton);
+
+        JButton insertionSortButton = new JButton("Insertion Sort");
+        insertionSortButton.addActionListener(e -> {
+            this.doSort = true;
+
+            for (int i = 0; i < GRID_WIDTH; i++) {
+                this.sorts[i] = new InsertionSort(this.grid, i, DELAY);
+            }
+        });
+        controlPanel.add(insertionSortButton);
 
         frame.add(controlPanel, BorderLayout.EAST);
         frame.pack();
