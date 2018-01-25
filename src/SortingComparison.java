@@ -63,13 +63,13 @@ public class SortingComparison {
         this.algorithms = new ArrayList<>();
         this.algorithms.add(SelectionSort.class);
         this.algorithms.add(InsertionSort.class);
-        this.algorithms.add(MergeSort.class);
+        this.algorithms.add(MergeSortTopDown.class);
         this.algorithms.add(QuickSort.class);
         this.algorithms.add(None.class);
-        this.algorithmDelays.put(SelectionSort.class, 50);
-        this.algorithmDelays.put(InsertionSort.class, 45);
-        this.algorithmDelays.put(MergeSort.class, 8);
-        this.algorithmDelays.put(QuickSort.class, 10);
+        this.algorithmDelays.put(SelectionSort.class, 70);
+        this.algorithmDelays.put(InsertionSort.class, 68);
+        this.algorithmDelays.put(MergeSortTopDown.class, 10);
+        this.algorithmDelays.put(QuickSort.class, 12);
         this.algorithmDelays.put(None.class, 0);
 
         // Set grid colors
@@ -97,7 +97,7 @@ public class SortingComparison {
 
         String[] algorithmOptions = new String[this.algorithms.size()];
         for (int i = 0; i < this.algorithms.size(); i++) {
-            algorithmOptions[i] = this.algorithms.get(i).getCanonicalName();
+            algorithmOptions[i] = this.algorithms.get(i).toString();
         }
 
         for (int i = 0; i < this.subGrids.length; i++) {

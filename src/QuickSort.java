@@ -11,7 +11,7 @@ public class QuickSort extends Sort {
      */
     @Override
     public void run() {
-        quicksort(0, length() - 1);
+        quickSort(0, length() - 1);
     }
 
     /**
@@ -20,11 +20,11 @@ public class QuickSort extends Sort {
      * @param lo
      * @param hi
      */
-    private void quicksort(int lo, int hi) {
+    private void quickSort(int lo, int hi) {
         if (lo < hi) {
             int p = partition(lo, hi);
-            quicksort(lo, p - 1);
-            quicksort(p + 1, hi);
+            quickSort(lo, p - 1);
+            quickSort(p + 1, hi);
         }
     }
 
