@@ -64,10 +64,12 @@ public class SortingComparison {
         this.algorithms.add(SelectionSort.class);
         this.algorithms.add(InsertionSort.class);
         this.algorithms.add(MergeSort.class);
+        this.algorithms.add(QuickSort.class);
         this.algorithms.add(None.class);
         this.algorithmDelays.put(SelectionSort.class, 50);
         this.algorithmDelays.put(InsertionSort.class, 45);
         this.algorithmDelays.put(MergeSort.class, 8);
+        this.algorithmDelays.put(QuickSort.class, 10);
         this.algorithmDelays.put(None.class, 0);
 
         // Set grid colors
@@ -178,6 +180,16 @@ public class SortingComparison {
                     }
                 }
                 break;
+            case SORTED:
+                for (int i = 0; i < GRID_HEIGHT; i++) {
+                    columnValues.add(i);
+                }
+                for (int x = 0; x < GRID_WIDTH; x++) {
+                    for (int y = 0; y < GRID_HEIGHT; y++) {
+                        this.grid.set(subGrid.convert(x, y), columnValues.get(y));
+                    }
+                }
+                break;
             case REVERSE_SORTED:
                 for (int i = 0; i < GRID_HEIGHT; i++) {
                     columnValues.add(GRID_HEIGHT - 1 - i);
@@ -264,6 +276,6 @@ public class SortingComparison {
      * How the data is initially shuffled.
      */
     private enum ShuffleType {
-        RANDOM, REVERSE_SORTED
+        RANDOM, SORTED, REVERSE_SORTED
     }
 }
