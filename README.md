@@ -65,6 +65,7 @@ The implemented algorithm can use the following methods:
 * `get(i)` -- Returns the element at index i.
 * `set(i, val)` -- Sets index i to store val.
 * `delay()` -- Sleeps the thread for a set amount of time, allowing the sorting process to be seen. Best placed inside loops/methods at their ends.
+
 Be aware that only changes made using `set()` will appear visually.
 
 ### Useful Editable Constants ###
