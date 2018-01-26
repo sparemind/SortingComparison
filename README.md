@@ -5,6 +5,8 @@ sorting algorithms.
 
 ![Sorting Comparison](img/header.png)
 
+[**See demo gif here**](https://gfycat.com/mammothaltruisticamericanbadger)
+
 ## Overview ##
 The comparison window consists of several grids, each displaying the execution
 of one algorithm.
