@@ -14,12 +14,12 @@ import java.util.List;
 import java.util.Map;
 
 public class SortingComparison {
-    private static final int GRID_WIDTH = 100;
+    private static final int GRID_WIDTH = 50;
     private static final int GRID_HEIGHT = 100;
     private static final int CELL_SIZE = 3;
     private static final int MARGIN_X = 3;
     private static final int MARGIN_Y = 3;
-    private static final int GRIDS_HORZ = 4;
+    private static final int GRIDS_HORZ = 6;
     private static final int GRIDS_VERT = 1;
     private static final int BORDER = 3;
 
@@ -42,6 +42,7 @@ public class SortingComparison {
         int fullWidth = MARGIN_X * 2 + GRIDS_HORZ * GRID_WIDTH + (GRIDS_HORZ - 1) * BORDER;
         int fullHeight = MARGIN_Y * 2 + GRIDS_VERT * GRID_HEIGHT + (GRIDS_VERT - 1) * BORDER;
         this.grid = new SimpleGrid(fullWidth, fullHeight, CELL_SIZE, 0, "Sorting Algorithm Comparison");
+        this.grid.setGridlineColor(Color.GRAY);
         this.grid.fill(-1);
 
         // Create sub-grids
@@ -64,11 +65,13 @@ public class SortingComparison {
         this.algorithms.add(SelectionSort.class);
         this.algorithms.add(InsertionSort.class);
         this.algorithms.add(MergeSortTopDown.class);
+        this.algorithms.add(MergeSortBottomUp.class);
         this.algorithms.add(QuickSort.class);
         this.algorithms.add(None.class);
         this.algorithmDelays.put(SelectionSort.class, 70);
         this.algorithmDelays.put(InsertionSort.class, 68);
         this.algorithmDelays.put(MergeSortTopDown.class, 10);
+        this.algorithmDelays.put(MergeSortBottomUp.class, 10);
         this.algorithmDelays.put(QuickSort.class, 12);
         this.algorithmDelays.put(None.class, 0);
 
@@ -97,7 +100,7 @@ public class SortingComparison {
 
         String[] algorithmOptions = new String[this.algorithms.size()];
         for (int i = 0; i < this.algorithms.size(); i++) {
-            algorithmOptions[i] = this.algorithms.get(i).toString();
+            algorithmOptions[i] = this.algorithms.get(i).getCanonicalName();
         }
 
         for (int i = 0; i < this.subGrids.length; i++) {
