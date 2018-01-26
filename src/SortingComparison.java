@@ -14,7 +14,7 @@ import java.util.List;
 import java.util.Map;
 
 public class SortingComparison {
-    private static final int GRID_WIDTH = 50;
+    private static final int GRID_WIDTH = 60;
     private static final int GRID_HEIGHT = 100;
     private static final int CELL_SIZE = 3;
     private static final int MARGIN_X = 3;
@@ -62,12 +62,14 @@ public class SortingComparison {
         this.selectionBoxes = new JComboBox[GRIDS_HORZ * GRIDS_VERT];
         this.algorithmDelays = new HashMap<>();
         this.algorithms = new ArrayList<>();
+        this.algorithms.add(BubbleSort.class);
         this.algorithms.add(SelectionSort.class);
         this.algorithms.add(InsertionSort.class);
         this.algorithms.add(MergeSortTopDown.class);
         this.algorithms.add(MergeSortBottomUp.class);
         this.algorithms.add(QuickSort.class);
         this.algorithms.add(None.class);
+        this.algorithmDelays.put(BubbleSort.class, 70);
         this.algorithmDelays.put(SelectionSort.class, 70);
         this.algorithmDelays.put(InsertionSort.class, 68);
         this.algorithmDelays.put(MergeSortTopDown.class, 10);
