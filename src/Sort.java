@@ -9,9 +9,10 @@ public class Sort extends Thread {
      * Create a new Sort that will operate on the given column of the given
      * grid.
      *
-     * @param grid   The grid to operate on.
-     * @param column The column of the grid to operate on.
-     * @param delay  The delay between sorting steps, in milliseconds.
+     * @param grid    The grid to operate on.
+     * @param subGrid The area of the grid this sort displays on.
+     * @param column  The column of the subgrid to operate on.
+     * @param delay   The delay between sorting steps, in milliseconds.
      */
     public Sort(SimpleGrid grid, SubGrid subGrid, int column, int delay) {
         this.grid = grid;
