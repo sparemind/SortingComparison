@@ -33,29 +33,29 @@ public class Sort extends Thread {
     }
 
     /**
-     * TODO
+     * Returns the height of the column this sort is sorting.
      *
-     * @return
+     * @return The height of the column this sort is sorting.
      */
     protected int length() {
         return this.subGrid.getHeight();
     }
 
     /**
-     * TODO
+     * Returns the value at a given index in this sort's column.
      *
-     * @param index
-     * @return
+     * @param index The index of the element in this sort's column to get.
+     * @return The element at the given index in this sort's column.
      */
     protected int get(int index) {
         return this.grid.get(this.subGrid.convert(this.column, index));
     }
 
     /**
-     * TODO
+     * Sets a given index in this sort's column to the given value.
      *
-     * @param index
-     * @param value
+     * @param index The index of the column to set.
+     * @param value The value to set the index to.
      */
     protected void set(int index, int value) {
         this.grid.set(this.subGrid.convert(this.column, index), value);

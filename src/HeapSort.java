@@ -9,7 +9,7 @@ public class Heapsort extends Sort {
     }
 
     /**
-     * Heap Sort.
+     * Heapsort.
      */
     @Override
     public void run() {
