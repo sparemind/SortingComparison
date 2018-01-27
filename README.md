@@ -34,6 +34,7 @@ shuffled data, although these can be edited.
     * Top Down
     * Bottom Up
 * [Quicksort](https://en.wikipedia.org/wiki/Quicksort)
+* [Heapsort](https://en.wikipedia.org/wiki/Heapsort)
 
 ## Running ##
 

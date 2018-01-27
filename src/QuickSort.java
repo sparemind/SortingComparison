@@ -1,8 +1,8 @@
-public class QuickSort extends Sort {
+public class Quicksort extends Sort {
     /**
      * {@inheritDoc}
      */
-    public QuickSort(SimpleGrid grid, SubGrid subGrid, int column, int delay) {
+    public Quicksort(SimpleGrid grid, SubGrid subGrid, int column, int delay) {
         super(grid, subGrid, column, delay);
     }
 

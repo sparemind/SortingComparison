@@ -66,17 +66,17 @@ public class SortingComparison {
         this.algorithms.add(SelectionSort.class);
         this.algorithms.add(InsertionSort.class);
         this.algorithms.add(MergeSortTopDown.class);
+        this.algorithms.add(Heapsort.class);
+        this.algorithms.add(Quicksort.class);
         this.algorithms.add(MergeSortBottomUp.class);
-        this.algorithms.add(QuickSort.class);
-        this.algorithms.add(HeapSort.class);
         this.algorithms.add(None.class);
         this.algorithmDelays.put(BubbleSort.class, 70);
         this.algorithmDelays.put(SelectionSort.class, 70);
         this.algorithmDelays.put(InsertionSort.class, 68);
         this.algorithmDelays.put(MergeSortTopDown.class, 10);
         this.algorithmDelays.put(MergeSortBottomUp.class, 10);
-        this.algorithmDelays.put(QuickSort.class, 12);
-        this.algorithmDelays.put(HeapSort.class, 12);
+        this.algorithmDelays.put(Quicksort.class, 12);
+        this.algorithmDelays.put(Heapsort.class, 12);
         this.algorithmDelays.put(None.class, 0);
 
         // Set grid colors

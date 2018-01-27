@@ -1,10 +1,10 @@
-public class HeapSort extends Sort {
+public class Heapsort extends Sort {
     private static final int DEGREE = 2;
 
     /**
      * {@inheritDoc}
      */
-    public HeapSort(SimpleGrid grid, SubGrid subGrid, int column, int delay) {
+    public Heapsort(SimpleGrid grid, SubGrid subGrid, int column, int delay) {
         super(grid, subGrid, column, delay);
     }
 
