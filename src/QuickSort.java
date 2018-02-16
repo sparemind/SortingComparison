@@ -41,9 +41,16 @@ public class Quicksort extends Sort {
      * the right partition.
      */
     private int partition(int lo, int hi) {
+        // Get the index of the median element of the first, middle, and last
+        // elements
+        int mid = lo + (hi - lo) / 2;
+        int median = median(lo, mid, hi);
+
         // Elements < this value will appear in the index range [lo, i]
         // Elements >= this value will appear in the index range (i, hi]
-        int pivot = get(hi);
+        int pivot = get(median);
+        swap(median, hi);
+
         // Index just before the next available spot to swap (i.e. the index
         // of the last swapped value)
         int i = lo - 1;
@@ -60,5 +67,43 @@ public class Quicksort extends Sort {
         // Return the index of the first element in the right partition (the
         // pivot), which contains all elements >= the pivot value
         return i + 1;
+    }
+
+    /**
+     * Returns the index of the median of the values at the given indices in
+     * this sort's column.
+     *
+     * @param a Index of element 1.
+     * @param b Index of element 2.
+     * @param c Index of element 3.
+     * @return The index of the median of the values at the given indices in
+     * this sort's column.
+     */
+    private int median(int a, int b, int c) {
+        int aValue = get(a);
+        int bValue = get(b);
+        int cValue = get(c);
+
+        if (aValue < bValue) {
+            // a < b
+            if (aValue >= cValue) {
+                // c <= a < b
+                return a;
+            } else if (bValue < cValue) {
+                // a < b < c
+                return b;
+            }
+        } else {
+            // b <= a
+            if (aValue < cValue) {
+                // b <= a < c
+                return a;
+            } else if (bValue >= cValue) {
+                // c <= b <= a
+                return b;
+            }
+        }
+        // a < c <= b || b < c <= a
+        return c;
     }
 }

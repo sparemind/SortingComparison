@@ -75,7 +75,7 @@ public class SortingComparison {
         this.algorithmDelays.put(InsertionSort.class, 68);
         this.algorithmDelays.put(MergeSortTopDown.class, 10);
         this.algorithmDelays.put(MergeSortBottomUp.class, 10);
-        this.algorithmDelays.put(Quicksort.class, 12);
+        this.algorithmDelays.put(Quicksort.class, 17);
         this.algorithmDelays.put(Heapsort.class, 12);
         this.algorithmDelays.put(None.class, 0);
 
